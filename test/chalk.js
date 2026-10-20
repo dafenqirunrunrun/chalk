@@ -138,7 +138,16 @@ test('properly convert ANSI 256 to 16 colors on basic color terminals', t => {
 	t.is(new Chalk({level: 1}).bgAnsi256(2)('hello'), '\u{1B}[42mhello\u{1B}[49m');
 	t.is(new Chalk({level: 1}).ansi256(8)('hello'), '\u{1B}[90mhello\u{1B}[39m');
 	t.is(new Chalk({level: 1}).ansi256(232)('hello'), '\u{1B}[30mhello\u{1B}[39m');
-	t.is(new Chalk({level: 1}).ansi256(255)('hello'), '\u{1B}[37mhello\u{1B}[39m');
+	t.is(new Chalk({level: 1}).ansi256(244)('hello'), '\u{1B}[37mhello\u{1B}[39m');
+	t.is(new Chalk({level: 1}).ansi256(251)('hello'), '\u{1B}[97mhello\u{1B}[39m');
+	t.is(new Chalk({level: 1}).ansi256(255)('hello'), '\u{1B}[97mhello\u{1B}[39m');
+});
+
+test('map the ANSI 256 grayscale ramp onto distinct ANSI 16 colors', t => {
+	const instance = new Chalk({level: 1});
+	const codes = new Set(Array.from({length: 24}, (_, index) => instance.ansi256(232 + index)('x')));
+
+	t.deepEqual([...codes], ['\u{1B}[30mx\u{1B}[39m', '\u{1B}[37mx\u{1B}[39m', '\u{1B}[97mx\u{1B}[39m']);
 });
 
 test('keep ANSI 256 colors on 256 color and Truecolor terminals', t => {
