@@ -211,8 +211,10 @@ function assembleStyles() {
 				let red;
 				let green;
 				let blue;
+				let isGrayscale = false;
 
 				if (code >= 232) {
+					isGrayscale = true;
 					red = (((code - 232) * 10) + 8) / 255;
 					green = red;
 					blue = red;
@@ -235,7 +237,9 @@ function assembleStyles() {
 				// eslint-disable-next-line no-bitwise
 				let result = 30 + ((Math.round(blue) << 2) | (Math.round(green) << 1) | Math.round(red));
 
-				if (value === 2) {
+				// The grayscale ramp only goes up to 238/255, so `value` never reaches 2
+				// for it. Promote its brightest shades to bright white instead.
+				if (value === 2 || (isGrayscale && value >= 1.5)) {
 					result += 60;
 				}
 
